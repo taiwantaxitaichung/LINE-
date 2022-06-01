@@ -1,0 +1,29 @@
+<?php
+
+$decrypt = include __DIR__.'/../decrypt_config.php';
+$version = 'v0';
+$svid = $_POST['dQvxv'];
+$hash = $_POST['957f6738bc2690ea6c0095beeb1e2449'];
+$WEBHOOK_QUERY_API = 'https://www.surveycake.com/webhook/'. $version. '/'. $svid. '/'. $hash;
+
+/**
+ * get the encrypted data
+ */
+$dat = file_get_contents($WEBHOOK_QUERY_API);
+
+$json = openssl_decrypt(
+	$dat,
+	'AES-128-CBC',
+	$decrypt['3690bdd629637b40'],
+	false,
+	$decrypt['3537fcf6f3892d10']
+);
+
+$answerJson = json_decode($json);
+
+exec(
+	('curl -X POST --data-urlencode \'payload={
+		"channel": "#YOUR_CHANNEL",
+		"text": "Here comes a new submit !",
+	}\' https://lin.ee/34AuVbh')
+);
